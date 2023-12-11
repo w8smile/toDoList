@@ -1,26 +1,46 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import ToDoList, {TaskType} from "./components/ToDoList";
 
+export type FilterValueType = 'all' | 'completed' | 'active'
+
 function App() {
+    const [filterValue, setFilter] = useState<FilterValueType>('all')
+    const todoListTitle = "What to learn"
+    let [tasks, setTasks] = useState<Array<TaskType>>([
+        {id: 1, title: 'HTML&CSS', isDone: true},
+        {id: 2, title: 'JS', isDone: true},
+        {id: 3, title: 'ReactJS', isDone: false},
+        {id: 4, title: 'Redux', isDone: false},
+        {id: 5, title: 'ПППП', isDone: false},
+    ])
+    const removeTask = (taskid: number) => {
+        setTasks(tasks.filter(t => t.id !== taskid));
+    }
 
-    const todoListTitle_1 = "What to learn"
-    const tasks_1 = [
-        {id: 1, title: "HTML" , isDone: true},
-        {id: 2, title: "CSS", isDone: true},
-        {id: 3, title: "ES6/TS", isDone: false},
-        {id: 4, title: "React", isDone: true},
-    ]
+    const changeTodoListFilter = (filterValue: FilterValueType) => {
+        setFilter(filterValue)
+    }
 
-    const tasks_2 = [
-        {id: 5, title: "MEAT", isDone: true},
-        {id: 6, title: "EGG", isDone: true},
-        {id: 7, title: "WATER", isDone: true},
-    ]
+    const getFiltredTasks = (tasks: Array<TaskType>, filter: FilterValueType): Array<TaskType> => {
+        return filter === 'active'
+            ? tasks.filter(t => t.isDone === false)
+            : filter === 'completed'
+                ? tasks.filter(t => t.isDone === true)
+                : tasks
+    }
+    // const filtredTasks = getFiltredTasks(tasks, filter)
+
+
     return (
         <div className="App">
-           <ToDoList title="What to learn?" tasks={tasks_1}/>
-           <ToDoList title="What to buy" tasks={tasks_2}/>
+            <ToDoList
+                title={todoListTitle}
+                tasks={getFiltredTasks(tasks, filterValue)}
+                removeTask={removeTask}
+                changeTodoListFilter={changeTodoListFilter}/>
+
+
         </div>
     );
 }
