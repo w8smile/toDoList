@@ -1,6 +1,6 @@
+import React, {useRef} from 'react';
 import Button from "./Button";
 import {FilterValueType} from "../App";
-import {useState, KeyboardEvent} from "react";
 
 export type TaskType = {
     id: string
@@ -20,12 +20,11 @@ export type ToDoListPropsType = {
 export function ToDoList({
                              title,
                              tasks,
-                             addTask,
                              removeTask,
+                             addTask,
                              changeTodoListFilter
                          }: ToDoListPropsType) {
-    const [taskTitle, setTaskTitle] = useState("")
-
+    const taskTitleInput = useRef<HTMLInputElement>(null)
     const listItems: Array<JSX.Element> = tasks.map((task: TaskType) => {
         return (
             <li>
@@ -40,46 +39,20 @@ export function ToDoList({
         ? <ul>{listItems}</ul>
         : <span>Task list is empty</span>
 
-    // const onChangeSetTaskTitle =
-
-    // const addTaskOnClickHandler = () => {
-    //     const trimmedTaskTitle = taskTitle.trim()
-    //     if(trimmedTaskTitle) {
-    //         addTask(taskTitle)
-    //     }else{
-    //         alert('У тебя одни пробелы')
-    //     }
-    // }
     const addTaskHandler = () => {
-        const trimmedTaskTitle = taskTitle.trim()
-        if(trimmedTaskTitle) {
-            addTask(taskTitle)
-        }else{
-            alert('У тебя одни пробелы)))')
+        if (taskTitleInput.current) {
+            const newTaskTitle = taskTitleInput.current.value
+            addTask(newTaskTitle)
+            taskTitleInput.current.value = ""
         }
-        setTaskTitle('')
     }
-
-    const addTaskKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>)=>
-    {if(e.key=== "Enter"&& taskTitle){
-        addTaskHandler()
-    }}
-
-
-
 
     return (
         <div className="todolist">
             <h3>{title}</h3>
             <div>
-                <input value={taskTitle}
-                       onChange={(e) => {
-                           setTaskTitle(e.currentTarget.value)
-                       }}
-                       onKeyDown={addTaskKeyDownHandler}
-
-                    />
-                <Button title="+" onClickHandler={addTaskHandler} isDisabled={!taskTitle}/>
+                <input ref={taskTitleInput}/>
+                <Button title="+" onClickHandler={addTaskHandler}/>
             </div>
             {taskList}
             <div>
